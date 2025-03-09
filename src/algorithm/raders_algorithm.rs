@@ -121,10 +121,11 @@ impl<T: FftNum> RadersAlgorithm<T> {
 
     fn perform_fft_out_of_place(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
+        let mut input = input.to_vec();
         // The first output element is just the sum of all the input elements, and we need to store off the first input value
         let (output_first, output) = output.split_first_mut().unwrap();
         let (input_first, input) = input.split_first_mut().unwrap();

@@ -176,7 +176,7 @@ impl<T: FftNum> RadixN<T> {
 
     fn perform_fft_out_of_place(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
@@ -209,8 +209,8 @@ impl<T: FftNum> RadixN<T> {
         }
 
         // Base-level FFTs
-        let base_scratch = if scratch.len() > 0 { scratch } else { input };
-        self.base_fft.process_with_scratch(output, base_scratch);
+        // let base_scratch = if scratch.len() > 0 { scratch } else { input };
+        self.base_fft.process_with_scratch(output, scratch);
 
         // cross-FFTs
         let mut cross_fft_len = self.base_len;

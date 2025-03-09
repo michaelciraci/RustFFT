@@ -194,7 +194,7 @@ pub trait Fft<T: FftNum>: Length + Direction + Sync + Send {
     /// - `buffer.len() % self.len() > 0`
     /// - `buffer.len() < self.len()`
     fn process(&self, buffer: &mut [Complex<T>]) {
-        let mut scratch = vec![Complex::zero(); self.get_inplace_scratch_len()];
+        let mut scratch = vec![Complex::zero(); self.get_inplace_scratch_len() * 2];
         self.process_with_scratch(buffer, &mut scratch);
     }
 
@@ -231,7 +231,7 @@ pub trait Fft<T: FftNum>: Length + Direction + Sync + Send {
     /// - `scratch.len() < self.get_outofplace_scratch_len()`
     fn process_outofplace_with_scratch(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     );

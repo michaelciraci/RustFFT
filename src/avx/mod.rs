@@ -32,7 +32,7 @@ macro_rules! boilerplate_avx_fft {
         impl<A: AvxNum, T: FftNum> Fft<T> for $struct_name<A, T> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
@@ -88,7 +88,7 @@ macro_rules! boilerplate_avx_fft {
                 }
 
                 let scratch = &mut scratch[..required_scratch];
-                let result = array_utils::iter_chunks(buffer, self.len(), |chunk| {
+                let result = array_utils::iter_chunks_mut(buffer, self.len(), |chunk| {
                     self.perform_fft_inplace(chunk, scratch)
                 });
 
@@ -132,7 +132,7 @@ macro_rules! boilerplate_avx_fft_commondata {
         impl<A: AvxNum, T: FftNum> Fft<T> for $struct_name<A, T> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
@@ -196,7 +196,7 @@ macro_rules! boilerplate_avx_fft_commondata {
                 }
 
                 let scratch = &mut scratch[..required_scratch];
-                let result = array_utils::iter_chunks(buffer, self.len(), |chunk| {
+                let result = array_utils::iter_chunks_mut(buffer, self.len(), |chunk| {
                     self.perform_fft_inplace(chunk, scratch)
                 });
 

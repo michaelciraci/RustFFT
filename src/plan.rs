@@ -666,6 +666,8 @@ impl<T: FftNum> FftPlannerScalar<T> {
 
 #[cfg(test)]
 mod unit_tests {
+    use num_complex::Complex;
+
     use super::*;
 
     fn is_mixedradixsmall(plan: &Recipe) -> bool {
@@ -878,6 +880,23 @@ mod unit_tests {
         let mut planner64 = FftPlannerScalar::<f64>::new();
         let fft_zero64 = planner64.plan_fft_forward(0);
         fft_zero64.process(&mut []);
+    }
+
+    #[test]
+    fn test_plan_scalar() {
+        let mut planner = FftPlannerScalar::new();
+        let fft = planner.plan_fft_forward(1234);
+        let mut buffer = vec![
+            Complex {
+                re: 0.0f32,
+                im: 0.0f32
+            };
+            1234
+        ];
+        fft.process(&mut buffer);
+        // The FFT instance returned by the planner has the type `Arc<dyn Fft<T>>`,
+        // where T is the numeric type, ie f32 or f64, so it's cheap to clone
+        let fft_clone = Arc::clone(&fft);
     }
 
     // This test is not designed to be run, only to compile.

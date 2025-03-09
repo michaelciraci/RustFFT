@@ -19,7 +19,7 @@ macro_rules! boilerplate_fft_butterfly {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 _scratch: &mut [Complex<T>],
             ) {
@@ -56,7 +56,7 @@ macro_rules! boilerplate_fft_butterfly {
                     return; // Unreachable, because fft_error_inplace asserts, but it helps codegen to put it here
                 }
 
-                let result = array_utils::iter_chunks(buffer, self.len(), |chunk| unsafe {
+                let result = array_utils::iter_chunks_mut(buffer, self.len(), |chunk| unsafe {
                     self.perform_fft_butterfly(chunk)
                 });
 
@@ -106,7 +106,7 @@ impl<T: FftNum> Butterfly1<T> {
 impl<T: FftNum> Fft<T> for Butterfly1<T> {
     fn process_outofplace_with_scratch(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
         _scratch: &mut [Complex<T>],
     ) {

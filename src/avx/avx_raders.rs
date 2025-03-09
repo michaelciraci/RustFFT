@@ -353,13 +353,15 @@ impl<A: AvxNum, T: FftNum> RadersAvx2<A, T> {
 
     fn perform_fft_out_of_place(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
+        let mut input = input.to_vec();
         unsafe {
             // Specialization workaround: See the comments in FftPlannerAvx::new() for why these calls to array_utils::workaround_transmute are necessary
-            let transmuted_input: &mut [Complex<A>] = array_utils::workaround_transmute_mut(input);
+            let transmuted_input: &mut [Complex<A>] =
+                array_utils::workaround_transmute_mut(&mut input);
             let transmuted_output: &mut [Complex<A>] =
                 array_utils::workaround_transmute_mut(output);
             self.prepare_raders(transmuted_input, transmuted_output)
@@ -412,7 +414,7 @@ impl<A: AvxNum, T: FftNum> RadersAvx2<A, T> {
         // copy the final values into the output, reordering as we go
         unsafe {
             // Specialization workaround: See the comments in FftPlannerAvx::new() for why these calls to array_utils::workaround_transmute are necessary
-            let transmuted_input: &mut [Complex<A>] = array_utils::workaround_transmute_mut(input);
+            let transmuted_input: &mut [Complex<A>] = array_utils::workaround_transmute_mut(&mut input);
             let transmuted_output: &mut [Complex<A>] =
                 array_utils::workaround_transmute_mut(output);
             self.finalize_raders(transmuted_input, transmuted_output);

@@ -5,8 +5,8 @@ use std::mem::MaybeUninit;
 use num_complex::Complex;
 
 use crate::array_utils;
-use crate::array_utils::workaround_transmute_mut;
 use crate::array_utils::DoubleBuf;
+use crate::array_utils::*;
 use crate::common::{fft_error_inplace, fft_error_outofplace};
 use crate::{common::FftNum, twiddles};
 use crate::{Direction, Fft, FftDirection, Length};
@@ -39,7 +39,7 @@ macro_rules! boilerplate_fft_simd_butterfly {
         impl<T: FftNum> Fft<T> for $struct_name<f32> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 _scratch: &mut [Complex<T>],
             ) {
@@ -56,7 +56,7 @@ macro_rules! boilerplate_fft_simd_butterfly {
                     |in_chunk, out_chunk| {
                         unsafe {
                             // Specialization workaround: See the comments in FftPlannerAvx::new() for why we have to transmute these slices
-                            let input_slice = workaround_transmute_mut(in_chunk);
+                            let input_slice = workaround_transmute(in_chunk);
                             let output_slice = workaround_transmute_mut(out_chunk);
                             self.perform_fft_f32(DoubleBuf {
                                 input: input_slice,
@@ -79,7 +79,7 @@ macro_rules! boilerplate_fft_simd_butterfly {
                     return; // Unreachable, because fft_error_inplace asserts, but it helps codegen to put it here
                 }
 
-                let result = array_utils::iter_chunks(buffer, self.len(), |chunk| {
+                let result = array_utils::iter_chunks_mut(buffer, self.len(), |chunk| {
                     unsafe {
                         // Specialization workaround: See the comments in FftPlannerAvx::new() for why we have to transmute these slices
                         self.perform_fft_f32(workaround_transmute_mut::<_, Complex<f32>>(chunk));
@@ -158,7 +158,7 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
             #[inline]
             fn perform_fft_out_of_place(
                 &self,
-                input: &mut [Complex<f32>],
+                input: &[Complex<f32>],
                 output: &mut [Complex<f32>],
             ) {
                 // Perform the column FFTs
@@ -173,7 +173,7 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
         impl<T: FftNum> Fft<T> for $struct_name<f32> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 _scratch: &mut [Complex<T>],
             ) {
@@ -184,8 +184,8 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                 }
 
                 // Specialization workaround: See the comments in FftPlannerAvx::new() for why these calls to array_utils::workaround_transmute are necessary
-                let transmuted_input: &mut [Complex<f32>] =
-                    unsafe { array_utils::workaround_transmute_mut(input) };
+                let transmuted_input: &[Complex<f32>] =
+                    unsafe { array_utils::workaround_transmute(input) };
                 let transmuted_output: &mut [Complex<f32>] =
                     unsafe { array_utils::workaround_transmute_mut(output) };
                 let result = array_utils::iter_chunks_zipped(
@@ -216,7 +216,7 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                     unsafe { array_utils::workaround_transmute_mut(buffer) };
                 let transmuted_scratch: &mut [Complex<f32>] =
                     unsafe { array_utils::workaround_transmute_mut(scratch) };
-                let result = array_utils::iter_chunks(transmuted_buffer, self.len(), |chunk| {
+                let result = array_utils::iter_chunks_mut(transmuted_buffer, self.len(), |chunk| {
                     self.perform_fft_inplace(chunk, transmuted_scratch)
                 });
 

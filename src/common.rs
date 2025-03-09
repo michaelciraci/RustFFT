@@ -75,7 +75,7 @@ macro_rules! boilerplate_fft_oop {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
@@ -132,7 +132,7 @@ macro_rules! boilerplate_fft_oop {
                 }
 
                 let (scratch, extra_scratch) = scratch.split_at_mut(self.len());
-                let result = array_utils::iter_chunks(buffer, self.len(), |chunk| {
+                let result = array_utils::iter_chunks_mut(buffer, self.len(), |chunk| {
                     self.perform_fft_out_of_place(chunk, scratch, extra_scratch);
                     chunk.copy_from_slice(scratch);
                 });
@@ -177,7 +177,7 @@ macro_rules! boilerplate_fft {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
             fn process_outofplace_with_scratch(
                 &self,
-                input: &mut [Complex<T>],
+                input: &[Complex<T>],
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
@@ -201,7 +201,7 @@ macro_rules! boilerplate_fft {
                     return; // Unreachable, because fft_error_outofplace asserts, but it helps codegen to put it here
                 }
 
-                let scratch = &mut scratch[..required_scratch];
+                // let scratch = &mut scratch[..required_scratch];
                 let result = array_utils::iter_chunks_zipped(
                     input,
                     output,
@@ -241,7 +241,7 @@ macro_rules! boilerplate_fft {
                 }
 
                 let scratch = &mut scratch[..required_scratch];
-                let result = array_utils::iter_chunks(buffer, self.len(), |chunk| {
+                let result = array_utils::iter_chunks_mut(buffer, self.len(), |chunk| {
                     self.perform_fft_inplace(chunk, scratch)
                 });
 

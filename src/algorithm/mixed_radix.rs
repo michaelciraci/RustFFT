@@ -153,23 +153,24 @@ impl<T: FftNum> MixedRadix<T> {
 
     fn perform_fft_out_of_place(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
+        let box_size = self.height * self.width;
         // SIX STEP FFT:
 
         // STEP 1: transpose
         transpose::transpose(input, output, self.width, self.height);
 
         // STEP 2: perform FFTs of size `height`
-        let height_scratch = if scratch.len() > input.len() {
-            &mut scratch[..]
-        } else {
-            &mut input[..]
-        };
+        // let height_scratch = if scratch.len() > input.len() {
+        //     &mut scratch[..]
+        // } else {
+        //     &mut input[..]
+        // };
         self.height_size_fft
-            .process_with_scratch(output, height_scratch);
+            .process_with_scratch(output, scratch);
 
         // STEP 3: Apply twiddle factors
         for (element, twiddle) in output.iter_mut().zip(self.twiddles.iter()) {
@@ -177,19 +178,19 @@ impl<T: FftNum> MixedRadix<T> {
         }
 
         // STEP 4: transpose again
-        transpose::transpose(output, input, self.height, self.width);
+        transpose::transpose(&mut output[..box_size], &mut scratch[..box_size], self.height, self.width);
 
         // STEP 5: perform FFTs of size `width`
-        let width_scratch = if scratch.len() > output.len() {
-            &mut scratch[..]
-        } else {
-            &mut output[..]
-        };
+        // let width_scratch = if scratch.len() > output.len() {
+        //     &mut scratch[..]
+        // } else {
+        //     &mut output[..]
+        // };
         self.width_size_fft
-            .process_with_scratch(input, width_scratch);
+            .process_with_scratch(&mut scratch[..box_size], output);
 
         // STEP 6: transpose again
-        transpose::transpose(input, output, self.width, self.height);
+        transpose::transpose(&mut scratch[..box_size], &mut output[..box_size], self.width, self.height);
     }
 }
 boilerplate_fft!(
@@ -304,16 +305,16 @@ impl<T: FftNum> MixedRadixSmall<T> {
 
     fn perform_fft_out_of_place(
         &self,
-        input: &mut [Complex<T>],
+        input: &[Complex<T>],
         output: &mut [Complex<T>],
-        _scratch: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
     ) {
         // SIX STEP FFT:
         // STEP 1: transpose
         unsafe { array_utils::transpose_small(self.width, self.height, input, output) };
 
         // STEP 2: perform FFTs of size `height`
-        self.height_size_fft.process_with_scratch(output, input);
+        self.height_size_fft.process_with_scratch(output, scratch);
 
         // STEP 3: Apply twiddle factors
         for (element, twiddle) in output.iter_mut().zip(self.twiddles.iter()) {
@@ -321,20 +322,20 @@ impl<T: FftNum> MixedRadixSmall<T> {
         }
 
         // STEP 4: transpose again
-        unsafe { array_utils::transpose_small(self.height, self.width, output, input) };
+        unsafe { array_utils::transpose_small(self.height, self.width, output, scratch) };
 
         // STEP 5: perform FFTs of size `width`
-        self.width_size_fft.process_with_scratch(input, output);
+        self.width_size_fft.process_with_scratch(scratch, output);
 
         // STEP 6: transpose again
-        unsafe { array_utils::transpose_small(self.width, self.height, input, output) };
+        unsafe { array_utils::transpose_small(self.width, self.height, &scratch, output) };
     }
 }
 boilerplate_fft!(
     MixedRadixSmall,
     |this: &MixedRadixSmall<_>| this.twiddles.len(),
     |this: &MixedRadixSmall<_>| this.len(),
-    |_| 0
+    |this: &MixedRadixSmall<_>| this.len()
 );
 
 #[cfg(test)]
@@ -413,9 +414,9 @@ mod unit_tests {
                 fft.process_with_scratch(&mut inplace_buffer, &mut inplace_scratch);
 
                 let mut outofplace_input = vec![Complex::zero(); fft.len()];
-                let mut outofplace_output = vec![Complex::zero(); fft.len()];
+                let mut outofplace_output = outofplace_input.clone();
                 let mut outofplace_scratch =
-                    vec![Complex::zero(); fft.get_outofplace_scratch_len()];
+                    vec![Complex::zero(); fft.get_outofplace_scratch_len().max(fft.len())];
                 fft.process_outofplace_with_scratch(
                     &mut outofplace_input,
                     &mut outofplace_output,

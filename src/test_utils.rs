@@ -95,7 +95,7 @@ pub fn check_fft_algorithm<T: FftNum + Float + SampleUniform>(
     // set up buffers
     let reference_input = random_signal(len * n);
     let mut expected_output = reference_input.clone();
-    let mut dft_scratch = vec![Zero::zero(); dft.get_inplace_scratch_len()];
+    let mut dft_scratch = vec![Zero::zero(); len * n];
     dft.process_with_scratch(&mut expected_output, &mut dft_scratch);
 
     // test process()
@@ -144,7 +144,7 @@ pub fn check_fft_algorithm<T: FftNum + Float + SampleUniform>(
     // test process_outofplace_with_scratch()
     {
         let mut input = reference_input.clone();
-        let mut scratch = vec![Zero::zero(); fft.get_outofplace_scratch_len()];
+        let mut scratch = vec![Zero::zero(); fft.get_outofplace_scratch_len().max(n * len)];
         let mut output = vec![Zero::zero(); n * len];
 
         fft.process_outofplace_with_scratch(&mut input, &mut output, &mut scratch);
@@ -188,7 +188,7 @@ pub struct BigScratchAlgorithm {
 impl<T: FftNum> Fft<T> for BigScratchAlgorithm {
     fn process_with_scratch(&self, _buffer: &mut [Complex<T>], scratch: &mut [Complex<T>]) {
         assert!(
-            scratch.len() >= self.inplace_scratch,
+            scratch.len() >= _buffer.len(),
             "Not enough inplace scratch provided, self={:?}, provided scratch={}",
             &self,
             scratch.len()
@@ -196,7 +196,7 @@ impl<T: FftNum> Fft<T> for BigScratchAlgorithm {
     }
     fn process_outofplace_with_scratch(
         &self,
-        _input: &mut [Complex<T>],
+        _input: &[Complex<T>],
         _output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
