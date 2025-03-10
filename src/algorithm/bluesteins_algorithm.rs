@@ -136,6 +136,15 @@ impl<T: FftNum> BluesteinsAlgorithm<T> {
             *buffer_entry = inner_entry.conj() * twiddle;
         }
     }
+    
+    fn perform_fft_immut(
+        &self,
+        input: &[Complex<T>],
+        output: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
+    ) {
+        todo!()
+    }
 
     fn perform_fft_out_of_place(
         &self,

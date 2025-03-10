@@ -82,6 +82,15 @@ impl<S: WasmNum, T: FftNum> WasmSimdRadix4<S, T> {
         }
     }
 
+    fn perform_fft_immut(
+        &self,
+        input: &[Complex<T>],
+        output: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
+    ) {
+        todo!()
+    }
+
     #[target_feature(enable = "simd128")]
     unsafe fn perform_fft_out_of_place(
         &self,

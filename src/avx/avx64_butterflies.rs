@@ -35,6 +35,14 @@ macro_rules! boilerplate_fft_simd_butterfly {
             }
         }
         impl<T: FftNum> Fft<T> for $struct_name<f64> {
+            fn process_immutable_with_scratch(
+                &self,
+                input: &[Complex<T>],
+                output: &mut [Complex<T>],
+                scratch: &mut [Complex<T>],
+            ) {
+                todo!()
+            }
             fn process_outofplace_with_scratch(
                 &self,
                 input: &mut [Complex<T>],
@@ -155,6 +163,15 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                 };
             }
 
+            fn perform_fft_immut(
+                &self,
+                input: &[Complex<T>],
+                output: &mut [Complex<T>],
+                scratch: &mut [Complex<T>],
+            ) {
+                todo!()
+            }
+
             #[inline]
             fn perform_fft_out_of_place(
                 &self,
@@ -171,6 +188,14 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
             }
         }
         impl<T: FftNum> Fft<T> for $struct_name<f64> {
+            fn process_immutable_with_scratch(
+                &self,
+                input: &[Complex<T>],
+                output: &mut [Complex<T>],
+                scratch: &mut [Complex<T>],
+            ) {
+                todo!()
+            }
             fn process_outofplace_with_scratch(
                 &self,
                 input: &mut [Complex<T>],

@@ -73,6 +73,14 @@ pub fn fft_error_outofplace(
 macro_rules! boilerplate_fft_oop {
     ($struct_name:ident, $len_fn:expr) => {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
+            fn process_immutable_with_scratch(
+                &self,
+                input: &[Complex<T>],
+                output: &mut [Complex<T>],
+                scratch: &mut [Complex<T>],
+            ) {
+                todo!()
+            }
             fn process_outofplace_with_scratch(
                 &self,
                 input: &mut [Complex<T>],
@@ -175,6 +183,15 @@ macro_rules! boilerplate_fft_oop {
 macro_rules! boilerplate_fft {
     ($struct_name:ident, $len_fn:expr, $inplace_scratch_len_fn:expr, $out_of_place_scratch_len_fn:expr) => {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
+            fn process_immutable_with_scratch(
+                &self,
+                input: &[Complex<T>],
+                output: &mut [Complex<T>],
+                scratch: &mut [Complex<T>],
+            ) {
+                todo!()
+            }
+
             fn process_outofplace_with_scratch(
                 &self,
                 input: &mut [Complex<T>],

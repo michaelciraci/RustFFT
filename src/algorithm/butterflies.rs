@@ -17,6 +17,14 @@ macro_rules! boilerplate_fft_butterfly {
             }
         }
         impl<T: FftNum> Fft<T> for $struct_name<T> {
+            fn process_immutable_with_scratch(
+                &self,
+                input: &[Complex<T>],
+                output: &mut [Complex<T>],
+                scratch: &mut [Complex<T>],
+            ) {
+                todo!()
+            }
             fn process_outofplace_with_scratch(
                 &self,
                 input: &mut [Complex<T>],
@@ -104,6 +112,15 @@ impl<T: FftNum> Butterfly1<T> {
     }
 }
 impl<T: FftNum> Fft<T> for Butterfly1<T> {
+    fn process_immutable_with_scratch(
+        &self,
+        input: &[Complex<T>],
+        output: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
+    ) {
+        todo!()
+    }
+
     fn process_outofplace_with_scratch(
         &self,
         input: &mut [Complex<T>],

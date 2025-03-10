@@ -151,6 +151,15 @@ impl<T: FftNum> MixedRadix<T> {
         transpose::transpose(scratch, buffer, self.width, self.height);
     }
 
+    fn perform_fft_immut(
+        &self,
+        input: &[Complex<T>],
+        output: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
+    ) {
+        todo!()
+    }
+
     fn perform_fft_out_of_place(
         &self,
         input: &mut [Complex<T>],
@@ -300,6 +309,15 @@ impl<T: FftNum> MixedRadixSmall<T> {
 
         // STEP 6: transpose again
         unsafe { array_utils::transpose_small(self.width, self.height, scratch, buffer) };
+    }
+
+    fn perform_fft_immut(
+        &self,
+        input: &[Complex<T>],
+        output: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
+    ) {
+        todo!()
     }
 
     fn perform_fft_out_of_place(
