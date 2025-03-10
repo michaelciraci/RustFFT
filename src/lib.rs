@@ -236,6 +236,20 @@ pub trait Fft<T: FftNum>: Length + Direction + Sync + Send {
         scratch: &mut [Complex<T>],
     );
 
+    fn process_immutable_with_scratch(
+        &self,
+        input: &[Complex<T>],
+        output: &mut [Complex<T>],
+        scratch: &mut [Complex<T>],
+    );// {
+    //     output.copy_from_slice(input);
+    //     self.process_with_scratch(output, scratch);
+    // }
+
+    fn get_immutable_scratch_len(&self) -> usize {
+        self.get_inplace_scratch_len()
+    }
+
     /// Returns the size of the scratch buffer required by `process_with_scratch`
     ///
     /// For most FFT sizes, this method will return `self.len()`. For a few small sizes it will return 0, and for some special FFT sizes
