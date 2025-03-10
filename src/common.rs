@@ -79,7 +79,40 @@ macro_rules! boilerplate_fft_oop {
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                if self.len() == 0 {
+                    return;
+                }
+
+                let required_scratch = self.get_immutable_scratch_len();
+                if input.len() < self.len()
+                    || output.len() != input.len()
+                    || scratch.len() < required_scratch
+                {
+                    // We want to trigger a panic, but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
+                    fft_error_outofplace(
+                        self.len(),
+                        input.len(),
+                        output.len(),
+                        required_scratch,
+                        scratch.len(),
+                    );
+                    return; // Unreachable, because fft_error_outofplace asserts, but it helps codegen to put it here
+                }
+
+                let result = array_utils::iter_chunks_zipped(
+                    input,
+                    output,
+                    self.len(),
+                    |in_chunk, out_chunk| {
+                        self.perform_fft_immut(in_chunk, out_chunk, scratch)
+                    },
+                );
+
+                if result.is_err() {
+                    // We want to trigger a panic, because the buffer sizes weren't cleanly divisible by the FFT size,
+                    // but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
+                    fft_error_outofplace(self.len(), input.len(), output.len(), 0, 0);
+                }
             }
             fn process_outofplace_with_scratch(
                 &self,

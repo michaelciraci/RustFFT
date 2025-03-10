@@ -146,7 +146,48 @@ macro_rules! boilerplate_avx_fft_commondata {
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                if self.len() == 0 {
+                    return;
+                }
+
+                let required_scratch = self.get_immutable_scratch_len();
+                if scratch.len() < required_scratch
+                    || input.len() < self.len()
+                    || output.len() != input.len()
+                {
+                    // We want to trigger a panic, but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
+                    fft_error_outofplace(
+                        self.len(),
+                        input.len(),
+                        output.len(),
+                        self.get_immutable_scratch_len(),
+                        scratch.len(),
+                    );
+                    return; // Unreachable, because fft_error_outofplace asserts, but it helps codegen to put it here
+                }
+
+                let scratch = &mut scratch[..required_scratch];
+                let result = array_utils::iter_chunks_zipped(
+                    input,
+                    output,
+                    self.len(),
+                    |in_chunk, out_chunk| {
+                        self.perform_fft_immut(in_chunk, out_chunk, scratch)
+                        // self.perform_fft_out_of_place(in_chunk, out_chunk, scratch)
+                    },
+                );
+
+                if result.is_err() {
+                    // We want to trigger a panic, because the buffer sizes weren't cleanly divisible by the FFT size,
+                    // but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
+                    fft_error_outofplace(
+                        self.len(),
+                        input.len(),
+                        output.len(),
+                        self.get_outofplace_scratch_len(),
+                        scratch.len(),
+                    );
+                }
             }
             fn process_outofplace_with_scratch(
                 &self,

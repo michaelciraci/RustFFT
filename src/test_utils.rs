@@ -186,6 +186,14 @@ pub struct BigScratchAlgorithm {
     pub direction: FftDirection,
 }
 impl<T: FftNum> Fft<T> for BigScratchAlgorithm {
+    fn process_immutable_with_scratch(
+            &self,
+            input: &[Complex<T>],
+            output: &mut [Complex<T>],
+            scratch: &mut [Complex<T>],
+        ) {
+        todo!()
+    }
     fn process_with_scratch(&self, _buffer: &mut [Complex<T>], scratch: &mut [Complex<T>]) {
         assert!(
             scratch.len() >= self.inplace_scratch,

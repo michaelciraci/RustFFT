@@ -5,7 +5,7 @@ use std::mem::MaybeUninit;
 use num_complex::Complex;
 
 use crate::array_utils;
-use crate::array_utils::workaround_transmute_mut;
+use crate::array_utils::*;
 use crate::array_utils::DoubleBuf;
 use crate::common::{fft_error_inplace, fft_error_outofplace};
 use crate::{common::FftNum, twiddles};
@@ -41,9 +41,36 @@ macro_rules! boilerplate_fft_simd_butterfly {
                 &self,
                 input: &[Complex<T>],
                 output: &mut [Complex<T>],
-                scratch: &mut [Complex<T>],
+                _scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                if input.len() < self.len() || output.len() != input.len() {
+                    // We want to trigger a panic, but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
+                    fft_error_outofplace(self.len(), input.len(), output.len(), 0, 0);
+                    return; // Unreachable, because fft_error_outofplace asserts, but it helps codegen to put it here
+                }
+
+                let result = array_utils::iter_chunks_zipped(
+                    input,
+                    output,
+                    self.len(),
+                    |in_chunk, out_chunk| {
+                        unsafe {
+                            // Specialization workaround: See the comments in FftPlannerAvx::new() for why we have to transmute these slices
+                            let input_slice = workaround_transmute(in_chunk);
+                            let output_slice = workaround_transmute_mut(out_chunk);
+                            self.perform_fft_f32(DoubleBuf {
+                                input: input_slice,
+                                output: output_slice,
+                            });
+                        }
+                    },
+                );
+
+                if result.is_err() {
+                    // We want to trigger a panic, because the buffer sizes weren't cleanly divisible by the FFT size,
+                    // but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
+                    fft_error_outofplace(self.len(), input.len(), output.len(), 0, 0);
+                }
             }
             fn process_outofplace_with_scratch(
                 &self,

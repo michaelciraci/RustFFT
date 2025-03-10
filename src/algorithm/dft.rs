@@ -47,11 +47,11 @@ impl<T: FftNum> Dft<T> {
 
     fn perform_fft_immut(
         &self,
-        input: &[Complex<T>],
-        output: &mut [Complex<T>],
-        scratch: &mut [Complex<T>],
+        signal: &[Complex<T>],
+        spectrum: &mut [Complex<T>],
+        _scratch: &mut [Complex<T>],
     ) {
-        todo!()
+        self.perform_fft_out_of_place(signal, spectrum, _scratch);
     }
 
     fn perform_fft_out_of_place(
