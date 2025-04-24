@@ -317,7 +317,9 @@ impl<A: AvxNum, T: FftNum> BluesteinsAvx<A, T> {
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
-        todo!()
+        // TODO
+        output.copy_from_slice(input);
+        self.process_with_scratch(output, scratch);
     }
 
     fn perform_fft_out_of_place(
