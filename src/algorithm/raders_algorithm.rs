@@ -125,7 +125,47 @@ impl<T: FftNum> RadersAlgorithm<T> {
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
-        todo!()
+        // The first output element is just the sum of all the input elements, and we need to store off the first input value
+        let (output_first, output) = output.split_first_mut().unwrap();
+        let (input_first, input) = input.split_first().unwrap();
+
+        // copy the input into the output, reordering as we go. also compute a sum of all elements
+        let mut input_index = 1;
+        for output_element in output.iter_mut() {
+            input_index = (input_index * self.primitive_root) % self.len;
+
+            let input_element = input[input_index - 1];
+            *output_element = input_element;
+        }
+
+        self.inner_fft.process_with_scratch(output, scratch);
+
+        // output[0] now contains the sum of elements 1..len. We need the sum of all elements, so all we have to do is add the first input
+        *output_first = *input_first + output[0];
+
+        // multiply the inner result with our cached setup data
+        // also conjugate every entry. this sets us up to do an inverse FFT
+        // (because an inverse FFT is equivalent to a normal FFT where you conjugate both the inputs and outputs)
+        for ((output_cell, scratch_cell), &multiple) in output
+            .iter()
+            .zip(scratch.iter_mut())
+            .zip(self.inner_fft_data.iter())
+        {
+            *scratch_cell = (*output_cell * multiple).conj();
+        }
+
+        // We need to add the first input value to all output values. We can accomplish this by adding it to the DC input of our inner ifft.
+        // Of course, we have to conjugate it, just like we conjugated the complex multiplied above
+        scratch[0] = scratch[0] + input_first.conj();
+
+        self.inner_fft.process_with_scratch(scratch, output);
+
+        // copy the final values into the output, reordering as we go
+        let mut output_index = 1;
+        for input_element in scratch {
+            output_index = (output_index * self.primitive_root_inverse) % self.len;
+            output[output_index - 1] = input_element.conj();
+        }
     }
 
     fn perform_fft_out_of_place(
