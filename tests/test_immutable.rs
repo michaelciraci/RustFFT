@@ -3,7 +3,7 @@ use rustfft::FftPlanner;
 
 #[test]
 fn immutable_0_thru_9() {
-    for i in 0..140 {
+    for i in 0..1400 {
         dbg!(i);
         let input = vec![Complex::new(7.0, 8.0); i];
 
