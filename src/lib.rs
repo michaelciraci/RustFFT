@@ -241,10 +241,10 @@ pub trait Fft<T: FftNum>: Length + Direction + Sync + Send {
         input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
-    );// {
-    //     output.copy_from_slice(input);
-    //     self.process_with_scratch(output, scratch);
-    // }
+    ); // {
+       //     output.copy_from_slice(input);
+       //     self.process_with_scratch(output, scratch);
+       // }
 
     fn get_immutable_scratch_len(&self) -> usize {
         self.get_inplace_scratch_len()

@@ -103,9 +103,7 @@ macro_rules! boilerplate_fft_oop {
                     input,
                     output,
                     self.len(),
-                    |in_chunk, out_chunk| {
-                        self.perform_fft_immut(in_chunk, out_chunk, scratch)
-                    },
+                    |in_chunk, out_chunk| self.perform_fft_immut(in_chunk, out_chunk, scratch),
                 );
 
                 if result.is_err() {
@@ -222,7 +220,41 @@ macro_rules! boilerplate_fft {
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                if self.len() == 0 {
+                    return;
+                }
+                let required_scratch = self.get_immutable_scratch_len();
+                if scratch.len() < required_scratch
+                    || input.len() < self.len()
+                    || output.len() != input.len()
+                {
+                    fft_error_outofplace(
+                        self.len(),
+                        input.len(),
+                        output.len(),
+                        required_scratch,
+                        scratch.len(),
+                    );
+                }
+
+                let scratch = &mut scratch[..required_scratch];
+                let result = array_utils::iter_chunks_zipped(
+                    input,
+                    output,
+                    self.len(),
+                    |in_chunk, out_chunk| {
+                        self.perform_fft_immut(in_chunk, out_chunk, scratch)
+                    },
+                );
+                if result.is_err() {
+                    fft_error_outofplace(
+                        self.len(),
+                        input.len(),
+                        output.len(),
+                        required_scratch,
+                        scratch.len(),
+                    );
+                }
             }
 
             fn process_outofplace_with_scratch(

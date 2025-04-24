@@ -317,7 +317,26 @@ impl<T: FftNum> MixedRadixSmall<T> {
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
     ) {
-        todo!()
+        // SIX STEP FFT:
+        // STEP 1: transpose
+        unsafe { array_utils::transpose_small(self.width, self.height, input, output) };
+
+        // STEP 2: perform FFTs of size `height`
+        self.height_size_fft.process_with_scratch(output, scratch);
+
+        // STEP 3: Apply twiddle factors
+        for (element, twiddle) in output.iter_mut().zip(self.twiddles.iter()) {
+            *element = *element * twiddle;
+        }
+
+        // STEP 4: transpose again
+        unsafe { array_utils::transpose_small(self.height, self.width, output, scratch) };
+
+        // STEP 5: perform FFTs of size `width`
+        self.width_size_fft.process_with_scratch(scratch, output);
+
+        // STEP 6: transpose again
+        unsafe { array_utils::transpose_small(self.width, self.height, scratch, output) };
     }
 
     fn perform_fft_out_of_place(
