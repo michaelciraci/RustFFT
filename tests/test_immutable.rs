@@ -16,7 +16,7 @@ fn immutable_0_thru_9() {
 
 #[test]
 fn immut_10() {
-    let input = vec![Complex::new(7.0, 8.0); 18];
+    let input = vec![Complex::new(7.0, 8.0); 10];
 
     let mut_output = fft_wrapper_mut(&input);
     let immut_output = fft_wrapper_immut(&input);

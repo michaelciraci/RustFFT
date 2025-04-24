@@ -75,7 +75,11 @@ macro_rules! boilerplate_mixedradix {
             output: &mut [Complex<T>],
             scratch: &mut [Complex<T>],
         ) {
-            todo!("line78")
+            // self.perform_column_butterflies() requires calcuations on inputs, and writing over
+            // just part of the inputs. In the future, perhaps it makes sense to write explicit logic
+            // for this function but for now use already supported AVX instructions
+            output.copy_from_slice(input);
+            self.perform_fft_inplace(output, scratch);
         }
 
         #[inline]
