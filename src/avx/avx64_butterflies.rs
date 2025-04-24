@@ -41,7 +41,7 @@ macro_rules! boilerplate_fft_simd_butterfly {
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                todo!("line44")
             }
             fn process_outofplace_with_scratch(
                 &self,
@@ -169,7 +169,7 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                todo!("line172")
             }
 
             #[inline]
@@ -194,7 +194,7 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                 output: &mut [Complex<T>],
                 scratch: &mut [Complex<T>],
             ) {
-                todo!()
+                todo!("line197")
             }
             fn process_outofplace_with_scratch(
                 &self,
