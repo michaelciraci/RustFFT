@@ -4,6 +4,7 @@ name = "rustfft"
 version = "6.2.0"
 authors = ["Allen Welkie <allen.welkie at gmail>", "Elliott Mahler <join.together at gmail>"]
 edition = "2018"
+rust-version = "1.63"
 
 description = "High-performance FFT library written in pure Rust."
 documentation = "https://docs.rs/rustfft/"
@@ -13,7 +14,7 @@ categories = ["algorithms", "compression", "multimedia::encoding", "science"]
 license = "MIT OR Apache-2.0"
 
 [features]
-default = []
+default = ["avx", "sse", "neon"]
 
 # On x86_64, the "avx" feature enables compilation of AVX-acclerated code. 
 # Similarly, the "sse" feature enables compilation of SSE-accelerated code. 

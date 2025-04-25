@@ -8,7 +8,7 @@ fn test_oop() {
     let forward = p.plan_fft_forward(s);
 
     let mut buffer: Vec<Complex<f32>> = (0..s).map(|i| Complex::new(i as f32, 0.0)).collect();
-    let mut scratch = vec![Complex::ZERO; forward.get_inplace_scratch_len()];
+    let mut scratch = vec![Complex::new(0.0, 0.0); forward.get_inplace_scratch_len()];
 
     forward.process_with_scratch(&mut buffer, &mut scratch);
 }
