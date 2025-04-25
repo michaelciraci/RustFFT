@@ -3,7 +3,7 @@ use rustfft::FftPlanner;
 
 #[test]
 fn immutable_f32_0_thru_9() {
-    for i in 0..1400 {
+    for i in 0..5000 {
         dbg!(i);
         let input = vec![Complex::new(7.0, 8.0); i];
 
@@ -16,7 +16,7 @@ fn immutable_f32_0_thru_9() {
 
 #[test]
 fn immutable_f64_0_thru_9() {
-    for i in 0..1400 {
+    for i in 0..5000 {
         dbg!(i);
         let input = vec![Complex::new(7.0, 8.0); i];
 
