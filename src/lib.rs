@@ -1,5 +1,3 @@
-#![cfg_attr(all(feature = "bench", test), feature(test))]
-
 //! RustFFT is a high-performance FFT library written in pure Rust.
 //!
 //! On X86_64, RustFFT supports the AVX instruction set for increased performance. No special code is needed to activate AVX:
@@ -134,7 +132,7 @@ mod twiddles;
 use num_complex::Complex;
 use num_traits::Zero;
 
-pub use crate::common::{FftNum, RadixFactor};
+pub use crate::common::FftNum;
 pub use crate::plan::{FftPlanner, FftPlannerScalar};
 
 /// A trait that allows FFT algorithms to report their expected input/output size
