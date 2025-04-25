@@ -97,7 +97,7 @@ impl<S: SseNum, T: FftNum> SseRadix4<S, T> {
         &self,
         input: &[Complex<T>],
         output: &mut [Complex<T>],
-        scratch: &mut [Complex<T>],
+        _scratch: &mut [Complex<T>],
     ) {
         // copy the data into the output vector
         if self.len() == self.base_len {

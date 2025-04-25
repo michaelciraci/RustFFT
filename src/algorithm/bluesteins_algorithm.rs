@@ -229,7 +229,9 @@ boilerplate_fft!(
     |this: &BluesteinsAlgorithm<_>| this.inner_fft_multiplier.len()
         + this.inner_fft.get_inplace_scratch_len(), // in-place scratch len
     |this: &BluesteinsAlgorithm<_>| this.inner_fft_multiplier.len()
-        + this.inner_fft.get_inplace_scratch_len()  // out of place scratch len
+        + this.inner_fft.get_inplace_scratch_len(),  // out of place scratch len
+    |this: &BluesteinsAlgorithm<_>| this.inner_fft_multiplier.len()
+        + this.inner_fft.get_inplace_scratch_len()  // immut scratch len
 );
 
 #[cfg(test)]

@@ -289,6 +289,7 @@ boilerplate_fft!(
     GoodThomasAlgorithm,
     |this: &GoodThomasAlgorithm<_>| this.len,
     |this: &GoodThomasAlgorithm<_>| this.inplace_scratch_len,
+    |this: &GoodThomasAlgorithm<_>| this.outofplace_scratch_len,
     |this: &GoodThomasAlgorithm<_>| this.outofplace_scratch_len
 );
 
@@ -490,6 +491,7 @@ boilerplate_fft!(
     GoodThomasAlgorithmSmall,
     |this: &GoodThomasAlgorithmSmall<_>| this.width * this.height,
     |this: &GoodThomasAlgorithmSmall<_>| this.len(),
+    |_| 0,
     |_| 0
 );
 

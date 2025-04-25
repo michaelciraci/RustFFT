@@ -212,7 +212,7 @@ macro_rules! boilerplate_fft_oop {
 }
 
 macro_rules! boilerplate_fft {
-    ($struct_name:ident, $len_fn:expr, $inplace_scratch_len_fn:expr, $out_of_place_scratch_len_fn:expr) => {
+    ($struct_name:ident, $len_fn:expr, $inplace_scratch_len_fn:expr, $out_of_place_scratch_len_fn:expr, $immut_scratch_len:expr) => {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
             fn process_immutable_with_scratch(
                 &self,
@@ -345,6 +345,10 @@ macro_rules! boilerplate_fft {
             #[inline(always)]
             fn get_outofplace_scratch_len(&self) -> usize {
                 $out_of_place_scratch_len_fn(self)
+            }
+            #[inline(always)]
+            fn get_immutable_scratch_len(&self) -> usize {
+                $immut_scratch_len(self)
             }
         }
         impl<T: FftNum> Length for $struct_name<T> {

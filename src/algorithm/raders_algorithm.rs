@@ -281,6 +281,7 @@ boilerplate_fft!(
     RadersAlgorithm,
     |this: &RadersAlgorithm<_>| this.len.get(),
     |this: &RadersAlgorithm<_>| this.inplace_scratch_len,
+    |this: &RadersAlgorithm<_>| this.outofplace_scratch_len,
     |this: &RadersAlgorithm<_>| this.outofplace_scratch_len
 );
 
