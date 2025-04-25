@@ -140,9 +140,9 @@ impl<T: FftNum> Fft<T> for Butterfly1<T> {
         &self,
         input: &[Complex<T>],
         output: &mut [Complex<T>],
-        scratch: &mut [Complex<T>],
+        _scratch: &mut [Complex<T>],
     ) {
-        todo!("line145")
+        output.copy_from_slice(&input);
     }
 
     fn process_outofplace_with_scratch(

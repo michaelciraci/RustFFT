@@ -243,11 +243,12 @@ impl<T: FftNum> GoodThomasAlgorithm<T> {
 
     fn perform_fft_immut(
         &self,
-        input: &[Complex<T>],
-        output: &mut [Complex<T>],
-        scratch: &mut [Complex<T>],
+        _input: &[Complex<T>],
+        _output: &mut [Complex<T>],
+        _scratch: &mut [Complex<T>],
     ) {
-        todo!()
+        // Why can't I hit this?
+        todo!("line250")
     }
 
     fn perform_fft_out_of_place(
