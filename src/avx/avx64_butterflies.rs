@@ -39,7 +39,7 @@ macro_rules! boilerplate_fft_simd_butterfly {
                 &self,
                 input: &[Complex<T>],
                 output: &mut [Complex<T>],
-                scratch: &mut [Complex<T>],
+                _scratch: &mut [Complex<T>],
             ) {
                 if input.len() < self.len() || output.len() != input.len() {
                     // We want to trigger a panic, but we want to avoid doing it in this function to reduce code size, so call a function marked cold and inline(never) that will do it for us
