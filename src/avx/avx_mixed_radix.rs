@@ -69,6 +69,7 @@ macro_rules! boilerplate_mixedradix {
             }
         }
 
+        #[inline]
         fn perform_fft_immut(
             &self,
             input: &[Complex<T>],

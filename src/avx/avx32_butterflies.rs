@@ -190,6 +190,7 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                 };
             }
 
+            #[inline]
             fn perform_fft_immut(
                 &self,
                 input: &[Complex<f32>],

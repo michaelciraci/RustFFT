@@ -142,7 +142,7 @@ impl<T: FftNum> Fft<T> for Butterfly1<T> {
         output: &mut [Complex<T>],
         _scratch: &mut [Complex<T>],
     ) {
-        output.copy_from_slice(&input);
+        output.copy_from_slice(input);
     }
 
     fn process_outofplace_with_scratch(
@@ -151,7 +151,7 @@ impl<T: FftNum> Fft<T> for Butterfly1<T> {
         output: &mut [Complex<T>],
         _scratch: &mut [Complex<T>],
     ) {
-        output.copy_from_slice(&input);
+        output.copy_from_slice(input);
     }
 
     fn process_with_scratch(&self, _buffer: &mut [Complex<T>], _scratch: &mut [Complex<T>]) {}
