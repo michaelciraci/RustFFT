@@ -1,0 +1,3 @@
+$ rustc hello.rs --target wasm32-wasip1
+$ wasmtime hello.wasm
+Hello, world!
