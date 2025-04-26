@@ -57,7 +57,7 @@ macro_rules! separate_interleaved_complex_f32 {
 macro_rules! boilerplate_fft_sse_oop {
     ($struct_name:ident, $len_fn:expr) => {
         impl<S: SseNum, T: FftNum> Fft<T> for $struct_name<S, T> {
-            fn process_immutable_with_scratch( 
+            fn process_immutable_with_scratch(
                 &self,
                 input: &[Complex<T>],
                 output: &mut [Complex<T>],

@@ -136,7 +136,7 @@ impl<T: FftNum> BluesteinsAlgorithm<T> {
             *buffer_entry = inner_entry.conj() * twiddle;
         }
     }
-    
+
     fn perform_fft_immut(
         &self,
         input: &[Complex<T>],
@@ -229,7 +229,7 @@ boilerplate_fft!(
     |this: &BluesteinsAlgorithm<_>| this.inner_fft_multiplier.len()
         + this.inner_fft.get_inplace_scratch_len(), // in-place scratch len
     |this: &BluesteinsAlgorithm<_>| this.inner_fft_multiplier.len()
-        + this.inner_fft.get_inplace_scratch_len(),  // out of place scratch len
+        + this.inner_fft.get_inplace_scratch_len(), // out of place scratch len
     |this: &BluesteinsAlgorithm<_>| this.inner_fft_multiplier.len()
         + this.inner_fft.get_inplace_scratch_len()  // immut scratch len
 );

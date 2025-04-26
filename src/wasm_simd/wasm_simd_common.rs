@@ -78,9 +78,7 @@ macro_rules! boilerplate_fft_wasm_simd_oop {
                         input,
                         output,
                         self.len(),
-                        |in_chunk, out_chunk| {
-                            self.perform_fft_immut(in_chunk, out_chunk, &mut [])
-                        },
+                        |in_chunk, out_chunk| self.perform_fft_immut(in_chunk, out_chunk, &mut []),
                     )
                 };
 

@@ -242,9 +242,7 @@ macro_rules! boilerplate_fft {
                     input,
                     output,
                     self.len(),
-                    |in_chunk, out_chunk| {
-                        self.perform_fft_immut(in_chunk, out_chunk, scratch)
-                    },
+                    |in_chunk, out_chunk| self.perform_fft_immut(in_chunk, out_chunk, scratch),
                 );
                 if result.is_err() {
                     fft_error_outofplace(

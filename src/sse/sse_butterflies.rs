@@ -4,8 +4,8 @@ use num_complex::Complex;
 use crate::{common::FftNum, FftDirection};
 
 use crate::array_utils;
-use crate::array_utils::{workaround_transmute_mut, workaround_transmute};
 use crate::array_utils::DoubleBuf;
+use crate::array_utils::{workaround_transmute, workaround_transmute_mut};
 use crate::common::{fft_error_inplace, fft_error_outofplace};
 use crate::twiddles;
 use crate::{Direction, Fft, Length};
@@ -176,7 +176,7 @@ macro_rules! boilerplate_fft_sse_f64_butterfly {
 macro_rules! boilerplate_fft_sse_common_butterfly {
     ($struct_name:ident, $len:expr, $direction_fn:expr) => {
         impl<T: FftNum> Fft<T> for $struct_name<T> {
-            fn process_immutable_with_scratch( 
+            fn process_immutable_with_scratch(
                 &self,
                 input: &[Complex<T>],
                 output: &mut [Complex<T>],

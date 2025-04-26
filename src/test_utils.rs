@@ -187,17 +187,17 @@ pub struct BigScratchAlgorithm {
 }
 impl<T: FftNum> Fft<T> for BigScratchAlgorithm {
     fn process_immutable_with_scratch(
+        &self,
+        _input: &[Complex<T>],
+        _output: &mut [Complex<T>],
+        _scratch: &mut [Complex<T>],
+    ) {
+        assert!(
+            _scratch.len() >= self.outofplace_scratch,
+            "Not enough immut scratch provided, self={:?}, provided scratch={}",
             &self,
-            _input: &[Complex<T>],
-            _output: &mut [Complex<T>],
-            _scratch: &mut [Complex<T>],
-        ) {
-            assert!(
-                _scratch.len() >= self.outofplace_scratch,
-                "Not enough immut scratch provided, self={:?}, provided scratch={}",
-                &self,
-                _scratch.len()
-            );
+            _scratch.len()
+        );
     }
     fn process_with_scratch(&self, _buffer: &mut [Complex<T>], scratch: &mut [Complex<T>]) {
         assert!(

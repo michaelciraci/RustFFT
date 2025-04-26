@@ -5,8 +5,8 @@ use std::mem::MaybeUninit;
 use num_complex::Complex;
 
 use crate::array_utils;
-use crate::array_utils::{workaround_transmute, workaround_transmute_mut};
 use crate::array_utils::DoubleBuf;
+use crate::array_utils::{workaround_transmute, workaround_transmute_mut};
 use crate::common::{fft_error_inplace, fft_error_outofplace};
 use crate::{common::FftNum, twiddles};
 use crate::{Direction, Fft, FftDirection, Length};
@@ -245,7 +245,9 @@ macro_rules! boilerplate_fft_simd_butterfly_with_scratch {
                     transmuted_input,
                     transmuted_output,
                     self.len(),
-                    |in_chunk, out_chunk| self.perform_fft_immut(in_chunk, out_chunk, transmuted_scratch),
+                    |in_chunk, out_chunk| {
+                        self.perform_fft_immut(in_chunk, out_chunk, transmuted_scratch)
+                    },
                 );
 
                 if result.is_err() {

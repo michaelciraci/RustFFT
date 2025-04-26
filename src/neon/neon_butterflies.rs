@@ -113,14 +113,19 @@ macro_rules! boilerplate_fft_neon_f64_butterfly {
                 input: &mut [Complex<T>],
                 output: &mut [Complex<T>],
             ) -> Result<(), ()> {
-                array_utils::iter_chunks_zipped_mut(input, output, self.len(), |in_chunk, out_chunk| {
-                    let input_slice = workaround_transmute_mut(in_chunk);
-                    let output_slice = workaround_transmute_mut(out_chunk);
-                    self.perform_fft_contiguous(DoubleBuf {
-                        input: input_slice,
-                        output: output_slice,
-                    })
-                })
+                array_utils::iter_chunks_zipped_mut(
+                    input,
+                    output,
+                    self.len(),
+                    |in_chunk, out_chunk| {
+                        let input_slice = workaround_transmute_mut(in_chunk);
+                        let output_slice = workaround_transmute_mut(out_chunk);
+                        self.perform_fft_contiguous(DoubleBuf {
+                            input: input_slice,
+                            output: output_slice,
+                        })
+                    },
+                )
             }
         }
     };

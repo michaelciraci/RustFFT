@@ -356,7 +356,7 @@ impl<A: AvxNum, T: FftNum> RadersAvx2<A, T> {
         input: &[Complex<T>],
         output: &mut [Complex<T>],
         scratch: &mut [Complex<T>],
-    ) {        
+    ) {
         // TODO: I think we should be able to effectively process the immut
         output.copy_from_slice(input);
         self.perform_fft_inplace(output, scratch);
