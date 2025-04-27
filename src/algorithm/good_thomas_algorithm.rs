@@ -492,7 +492,7 @@ boilerplate_fft!(
     |this: &GoodThomasAlgorithmSmall<_>| this.width * this.height,
     |this: &GoodThomasAlgorithmSmall<_>| this.len(),
     |_| 0,
-    |_| 0
+    |this: &GoodThomasAlgorithmSmall<_>| this.len()
 );
 
 #[cfg(test)]

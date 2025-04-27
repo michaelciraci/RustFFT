@@ -226,6 +226,9 @@ impl<T: FftNum> Fft<T> for BigScratchAlgorithm {
     fn get_outofplace_scratch_len(&self) -> usize {
         self.outofplace_scratch
     }
+    fn get_immutable_scratch_len(&self) -> usize {
+        self.outofplace_scratch
+    }
 }
 impl Length for BigScratchAlgorithm {
     fn len(&self) -> usize {

@@ -23,6 +23,7 @@ struct CommonSimdData<T, V> {
 
     inplace_scratch_len: usize,
     outofplace_scratch_len: usize,
+    immut_scratch_len: usize,
 
     direction: FftDirection,
 }
@@ -154,6 +155,10 @@ macro_rules! boilerplate_avx_fft {
             fn get_outofplace_scratch_len(&self) -> usize {
                 $out_of_place_scratch_len_fn(self)
             }
+            #[inline(always)]
+            fn get_immutable_scratch_len(&self) -> usize {
+                $inplace_scratch_len_fn(self)
+            }
         }
         impl<A: AvxNum, T> Length for $struct_name<A, T> {
             #[inline(always)]
@@ -183,7 +188,7 @@ macro_rules! boilerplate_avx_fft_commondata {
                     return;
                 }
 
-                let required_scratch = self.get_immutable_scratch_len();
+                let required_scratch = self.common_data.immut_scratch_len;
                 if scratch.len() < required_scratch
                     || input.len() < self.len()
                     || output.len() != input.len()
@@ -310,6 +315,10 @@ macro_rules! boilerplate_avx_fft_commondata {
             #[inline(always)]
             fn get_outofplace_scratch_len(&self) -> usize {
                 self.common_data.outofplace_scratch_len
+            }
+            #[inline(always)]
+            fn get_immutable_scratch_len(&self) -> usize {
+                self.common_data.immut_scratch_len
             }
         }
         impl<A: AvxNum, T> Length for $struct_name<A, T> {

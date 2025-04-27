@@ -15,7 +15,7 @@ fn test_100() {
         // dbg!(planner.get_inplace_scratch_len(), planner.get_outofplace_scratch_len());
         let mut output = input.clone();
         let mut output2 = output.clone();
-        let mut scratch = vec![Complex::new(0.0, 0.0); planner.get_inplace_scratch_len() + len];
+        let mut scratch = vec![Complex::new(0.0, 0.0); planner.get_immutable_scratch_len()];
         // planner.process_outofplace_with_scratch(&mut input, &mut output, &mut scratch);
         planner.process_immutable_with_scratch(&input, &mut output, &mut scratch);
 

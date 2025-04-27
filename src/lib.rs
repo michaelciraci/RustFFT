@@ -241,9 +241,7 @@ pub trait Fft<T: FftNum>: Length + Direction + Sync + Send {
         scratch: &mut [Complex<T>],
     );
 
-    fn get_immutable_scratch_len(&self) -> usize {
-        self.get_inplace_scratch_len()
-    }
+    fn get_immutable_scratch_len(&self) -> usize;
 
     /// Returns the size of the scratch buffer required by `process_with_scratch`
     ///

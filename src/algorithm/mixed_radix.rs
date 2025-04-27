@@ -181,6 +181,7 @@ impl<T: FftNum> MixedRadix<T> {
             *element = *element * twiddle;
         }
 
+        let scratch2 = &mut scratch2[..output.len()];
         // STEP 4: transpose again
         transpose::transpose(output, scratch2, self.height, self.width);
 
@@ -188,7 +189,7 @@ impl<T: FftNum> MixedRadix<T> {
         self.width_size_fft.process_with_scratch(scratch2, scratch);
 
         // STEP 6: transpose again
-        transpose::transpose(scratch, output, self.width, self.height);
+        transpose::transpose(scratch2, output, self.width, self.height);
     }
 
     fn perform_fft_out_of_place(
@@ -237,7 +238,7 @@ boilerplate_fft!(
     |this: &MixedRadix<_>| this.twiddles.len(),
     |this: &MixedRadix<_>| this.inplace_scratch_len,
     |this: &MixedRadix<_>| this.outofplace_scratch_len,
-    |this: &MixedRadix<_>| this.outofplace_scratch_len * 2
+    |this: &MixedRadix<_>| this.inplace_scratch_len * 2
 );
 
 /// Implementation of the Mixed-Radix FFT algorithm, specialized for smaller input sizes
@@ -404,7 +405,7 @@ boilerplate_fft!(
     |this: &MixedRadixSmall<_>| this.twiddles.len(),
     |this: &MixedRadixSmall<_>| this.len(),
     |_| 0,
-    |_| 0
+    |this: &MixedRadixSmall<_>| this.len()
 );
 
 #[cfg(test)]

@@ -195,6 +195,10 @@ macro_rules! boilerplate_fft_oop {
             fn get_outofplace_scratch_len(&self) -> usize {
                 self.outofplace_scratch_len()
             }
+            #[inline(always)]
+            fn get_immutable_scratch_len(&self) -> usize {
+                self.inplace_scratch_len()
+            }
         }
         impl<T> Length for $struct_name<T> {
             #[inline(always)]

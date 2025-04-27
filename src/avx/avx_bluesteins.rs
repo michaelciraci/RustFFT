@@ -144,6 +144,7 @@ impl<A: AvxNum, T: FftNum> BluesteinsAvx<A, T> {
 
                 inplace_scratch_len: required_scratch,
                 outofplace_scratch_len: required_scratch,
+                immut_scratch_len: required_scratch,
 
                 direction,
             },

@@ -282,7 +282,7 @@ boilerplate_fft!(
     |this: &RadersAlgorithm<_>| this.len.get(),
     |this: &RadersAlgorithm<_>| this.inplace_scratch_len,
     |this: &RadersAlgorithm<_>| this.outofplace_scratch_len,
-    |this: &RadersAlgorithm<_>| this.outofplace_scratch_len
+    |this: &RadersAlgorithm<_>| this.inplace_scratch_len
 );
 
 #[cfg(test)]

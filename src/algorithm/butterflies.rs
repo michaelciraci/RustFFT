@@ -106,6 +106,10 @@ macro_rules! boilerplate_fft_butterfly {
             fn get_outofplace_scratch_len(&self) -> usize {
                 0
             }
+            #[inline(always)]
+            fn get_immutable_scratch_len(&self) -> usize {
+                0
+            }
         }
         impl<T> Length for $struct_name<T> {
             #[inline(always)]
@@ -161,6 +165,10 @@ impl<T: FftNum> Fft<T> for Butterfly1<T> {
     }
 
     fn get_outofplace_scratch_len(&self) -> usize {
+        0
+    }
+
+    fn get_immutable_scratch_len(&self) -> usize {
         0
     }
 }
