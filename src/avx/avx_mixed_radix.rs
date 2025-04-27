@@ -205,9 +205,12 @@ macro_rules! mixedradix_column_butterflies {
             let len_per_row = self.len() / ROW_COUNT;
             let chunk_count = len_per_row / A::VectorType::COMPLEX_PER_VECTOR;
 
+            // If we don't have any column FFTs, we need to move the
+            // input into the output buffer for the remainder processing
             if chunk_count == 0 {
-                for i in 0..self.len() {
-                    buffer.store_partial1_complex(input.load_partial1_complex(i), i);
+                let simd_ops = self.len() / 4;
+                for i in (0..simd_ops).step_by(4) {
+                    buffer.store_complex(input.load_complex(i), i);
                 }
             } else {
                 // process the column FFTs
@@ -247,12 +250,12 @@ macro_rules! mixedradix_column_butterflies {
             if partial_remainder > 0 {
                 // We need to copy the partial remainders to the buffer
                 for c in 0..self.len() / len_per_row {
-                    let copy_start = c * len_per_row + len_per_row - partial_remainder;
+                    let cs = c * len_per_row + len_per_row - partial_remainder;
                     match partial_remainder {
-                        1 => buffer.store_partial1_complex(input.load_partial1_complex(copy_start), copy_start),
-                        2 => buffer.store_partial2_complex(input.load_partial2_complex(copy_start), copy_start),
-                        3 => buffer.store_partial3_complex(input.load_partial3_complex(copy_start), copy_start),
-                        _ => unreachable!()
+                        1 => buffer.store_partial1_complex(input.load_partial1_complex(cs), cs),
+                        2 => buffer.store_partial2_complex(input.load_partial2_complex(cs), cs),
+                        3 => buffer.store_partial3_complex(input.load_partial3_complex(cs), cs),
+                        _ => unreachable!(),
                     }
                 }
                 let partial_remainder_base = chunk_count * A::VectorType::COMPLEX_PER_VECTOR;
@@ -1078,12 +1081,12 @@ impl<A: AvxNum, T: FftNum> MixedRadix16xnAvx<A, T> {
         if partial_remainder > 0 {
             // We need to copy the partial remainders to the buffer
             for c in 0..self.len() / len_per_row {
-                let copy_start = c * len_per_row + len_per_row - partial_remainder;
+                let cs = c * len_per_row + len_per_row - partial_remainder;
                 match partial_remainder {
-                    1 => buffer.store_partial1_complex(input.load_partial1_complex(copy_start), copy_start),
-                    2 => buffer.store_partial2_complex(input.load_partial2_complex(copy_start), copy_start),
-                    3 => buffer.store_partial3_complex(input.load_partial3_complex(copy_start), copy_start),
-                    _ => unreachable!()
+                    1 => buffer.store_partial1_complex(input.load_partial1_complex(cs), cs),
+                    2 => buffer.store_partial2_complex(input.load_partial2_complex(cs), cs),
+                    3 => buffer.store_partial3_complex(input.load_partial3_complex(cs), cs),
+                    _ => unreachable!(),
                 }
             }
             let partial_remainder_base = chunk_count * A::VectorType::COMPLEX_PER_VECTOR;

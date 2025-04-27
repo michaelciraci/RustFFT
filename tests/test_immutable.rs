@@ -47,7 +47,6 @@ fn fft_wrapper_immut<T: FftNum>(input: &[Complex<T>]) -> Vec<Complex<T>> {
     let mut scratch = vec![cz; p.get_immutable_scratch_len()];
     let mut output = vec![cz; input.len()];
 
-
     p.process_immutable_with_scratch(input, &mut output, &mut scratch);
     output
 }
