@@ -145,29 +145,6 @@ mod unit_tests {
 
 // Loop over exact chunks of the provided buffer. Very similar in semantics to ChunksExactMut, but generates smaller code and requires no modulo operations
 // Returns Ok() if every element ended up in a chunk, Err() if there was a remainder
-pub fn iter_chunks<T>(
-    mut buffer: &[T],
-    chunk_size: usize,
-    mut chunk_fn: impl FnMut(&[T]),
-) -> Result<(), ()> {
-    // Loop over the buffer, splicing off chunk_size at a time, and calling chunk_fn on each
-    while buffer.len() >= chunk_size {
-        let (head, tail) = buffer.split_at(chunk_size);
-        buffer = tail;
-
-        chunk_fn(head);
-    }
-
-    // We have a remainder if there's data still in the buffer -- in which case we want to indicate to the caller that there was an unwanted remainder
-    if buffer.len() == 0 {
-        Ok(())
-    } else {
-        Err(())
-    }
-}
-
-// Loop over exact chunks of the provided buffer. Very similar in semantics to ChunksExactMut, but generates smaller code and requires no modulo operations
-// Returns Ok() if every element ended up in a chunk, Err() if there was a remainder
 pub fn iter_chunks_mut<T>(
     mut buffer: &mut [T],
     chunk_size: usize,
